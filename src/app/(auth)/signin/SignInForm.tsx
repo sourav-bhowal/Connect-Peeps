@@ -1,51 +1,43 @@
 "use client";
-import { signUpSchema, SignUpSchemaType } from "@/lib/validations";
-import { useForm } from "react-hook-form";
+import { signInSchema, SignInSchemaType } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
-import { signUp } from "./actions";
+import { useForm } from "react-hook-form";
+import { signIn } from "./actions";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
-// SIGN UP FORM
-export default function SignUpForm() {
+// SIGN IN FORM
+export default function SignInForm() {
   // ERROR STATE
   const [error, setError] = useState<string>();
 
-  // TRANSITION HOOK
+  // USE TRANSITION
   const [isPending, startTransition] = useTransition();
 
   // FORM
-  const form = useForm<SignUpSchemaType>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<SignInSchemaType>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
       username: "",
       password: "",
     },
   });
 
   // ON FORM SUBMIT
-  async function onSubmit(values: SignUpSchemaType) {
+  async function onSubmit(values: SignInSchemaType) {
     // set error undefined
     setError(undefined);
     // start transition
     startTransition(async () => {
       // send values to server action
-      const { error } = await signUp(values);
+      const { error } = await signIn(values);
       // handle error
       if (error) setError(error);
     });
-  };
+  }
 
   return (
     <Form {...form}>
@@ -59,20 +51,6 @@ export default function SignUpForm() {
               <FormLabel>Username</FormLabel>
               <FormControl>
                 <Input placeholder="username" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="email" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +75,7 @@ export default function SignUpForm() {
           {isPending ? (
             <Loader2 size={20} className="animate-spin" />
           ) : (
-            "Create account"
+            "Log in"
           )}
         </Button>
       </form>

@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 
-
+// SIGN IN SERVER
 export async function signIn(credentaials: SignInSchemaType): Promise<{error: string}> {
     try {
         // VALIDATE CREDENTIALS

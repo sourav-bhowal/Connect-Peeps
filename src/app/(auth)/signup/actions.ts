@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 
-
+// SIGN UP SERVER 
 export async function signUp(credentaials: SignUpSchemaType): Promise<{error: string}> {
     try {
         // VALIDATE CREDENTIALS

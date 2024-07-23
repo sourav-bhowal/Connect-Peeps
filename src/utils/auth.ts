@@ -43,7 +43,7 @@ export const lucia = new Lucia(adapter, {
   },
 });
 
-// VALIDATE REQUEST CACHE
+// VALIDATE SESSION REQUEST CACHE
 export const validateRequest = cache(
   async (): Promise<
     { user: User; session: Session } | { user: null; session: null }
