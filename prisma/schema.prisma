@@ -1,0 +1,41 @@
+// PRISMA CLIENT GENERATOR
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+
+// PRISMA DATABASE SOURCE 
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+
+// USER MODEL
+model User {
+  id        String    @id
+  username  String    @unique
+  name      String
+  email     String?   @unique
+  password  String?
+  googleId  String?   @unique
+  avatarUrl String?
+  bio       String?
+  createdAt DateTime  @default(now())
+  sessions   Session[]
+
+  @@map("users")  // Table name of user model
+}
+
+
+// SESSION MODEL
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions") // Table name of session model
+}
