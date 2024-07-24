@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 // SIGN-UP SCHEMA
 export const signUpSchema = z.object({
   email: z
@@ -24,7 +23,6 @@ export const signUpSchema = z.object({
     ),
 });
 
-
 // SIGN-IN SCHEMA
 export const signInSchema = z.object({
   username: z
@@ -39,8 +37,15 @@ export const signInSchema = z.object({
     .max(32, "Password must not exceed 32 characters"),
 });
 
+// POST SCHEMA
+export const createPostSchema = z.object({
+  content: z
+    .string()
+    .trim()
+    .min(5, "Content must be atleast 5 characters")
+    .max(300, "Content must not exceed 300 characters"),
+});
 
-
-
+// SCHEMA VALIDATIONS FOR FORMS
 export type SignUpSchemaType = z.infer<typeof signUpSchema>;
 export type SignInSchemaType = z.infer<typeof signInSchema>;
