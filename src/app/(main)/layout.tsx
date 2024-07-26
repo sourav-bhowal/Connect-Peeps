@@ -14,7 +14,7 @@ export default async function Layout({
   const session = await validateRequest();
 
   // IF USER NOT LOGGED IN
-  if (!session.user) redirect("/login");
+  if (!session.user) redirect("/signin");
 
   // RETURN CHILDREN
   return (
