@@ -7,7 +7,7 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  // USER FROM SESSION
+  // GET USER FROM SESSION
   const { user } = await validateRequest();
 
   // IF USER ALREADY LOGGED IN

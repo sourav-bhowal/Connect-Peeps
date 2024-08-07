@@ -14,11 +14,14 @@ export default async function Home() {
   return (
     <main className="w-full min-w-0 flex gap-5">
       <div className="w-full min-w-0 space-y-5">
+         {/* SHOW ASS POST WIDGET */}
         <PostEditor />
+        {/* SHOW POSTS */}
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
+      {/* SHOW RIGHT SIDE BAR */}
       <TrendsSideBar />
     </main>
   );

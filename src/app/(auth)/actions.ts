@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 
-
+// SIGN OUT USER FUNCTION (SERVER FUNCTION)
 export async function signOut() {
     // GET SESSION
     const { session } = await validateRequest();
