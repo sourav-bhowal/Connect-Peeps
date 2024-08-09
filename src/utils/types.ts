@@ -19,3 +19,10 @@ export const PostCardDataType = {
 export type PostCardData = Prisma.PostGetPayload<{
   include: typeof PostCardDataType;
 }>;
+
+
+// POSTS PAGE TYPE
+export interface PostsPage {
+  posts: PostCardData[];
+  nextCursor: string | null;
+}

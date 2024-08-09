@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prismaDB";
 import { createPostSchema } from "@/lib/validations";
 import { validateRequest } from "@/utils/auth";
+import { PostCardDataType } from "@/utils/types";
 
 // CREATE POST SERVER
 export async function createPost(inputValues: string) {
@@ -15,10 +16,13 @@ export async function createPost(inputValues: string) {
   const { content } = createPostSchema.parse({ content: inputValues });
 
   // CREATE POST
-  await prisma.post.create({
+  const newPost = await prisma.post.create({
     data: {
       content,
       userId: user.id,
     },
+    include: PostCardDataType
   });
+
+  return newPost;
 }

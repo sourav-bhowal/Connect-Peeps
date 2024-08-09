@@ -1,27 +1,50 @@
 "use client";
 import PostCard from "@/components/posts/postcard/PostCard";
-import { PostCardData } from "@/utils/types";
-import { useQuery } from "@tanstack/react-query";
+import PostsLodingSkeleton from "@/components/posts/PostsLoadingSkeleton";
+import InfiniteScrollContainer from "@/components/shared/InfiniteScrollContainer";
+import { kyInstance } from "@/utils/ky";
+import { PostsPage } from "@/utils/types";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 //FEED USING REACT QUERY
 export default function FeedForYou() {
-  const query = useQuery<PostCardData[]>({
+  // GET POSTS USING REACT QUERY INFINTE SCROLL
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
     queryKey: ["post-feed", "for-you"],
-    queryFn: async () => {
-      const response = await fetch("/api/posts/get-posts");
-      if (!response.ok) {
-        throw Error(`Request failed with status code ${response.status}`);
-      }
-      return response.json();
-    },
+    queryFn: ({ pageParam }) =>
+      kyInstance
+        .get(
+          "/api/posts/get-posts",
+          pageParam ? { searchParams: { cursor: pageParam } } : {},
+        )
+        .json<PostsPage>(),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
-  if (query.status === "pending") {
-    return <Loader2 className="mx-auto animate-spin" />;
+  const posts = data?.pages.flatMap((page) => page.posts) || [];
+
+  // RENDERING POSTS
+  if (status === "pending") {
+    return <PostsLodingSkeleton />;
   }
 
-  if (query.status === "error") {
+  if (status === "success" && !posts.length && !hasNextPage) {
+    return <p className="text-center text-muted-foreground">
+      No one has posted anything yet.
+    </p>
+  }
+
+  // IF THERE IS AN ERROR
+  if (status === "error") {
     return (
       <p className="text-center text-destructive">
         An error occured while loading posts.
@@ -29,11 +52,16 @@ export default function FeedForYou() {
     );
   }
 
+  // RENDER POSTS
   return (
-    <>
-      {query.data.map((post) => (
+    <InfiniteScrollContainer className="space-y-5"
+    onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}>
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
-    </>
+      {
+        isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />
+      }
+    </InfiniteScrollContainer>
   );
 }

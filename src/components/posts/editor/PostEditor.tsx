@@ -6,12 +6,17 @@ import { createPost } from "./action";
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserAvatar from "@/components/shared/UserAvatar";
 import { Button } from "@/components/ui/button";
-import "./styles.css"
+import "./styles.css";
+import { usePostSubmitMutation } from "./mutations";
+import { Loader2 } from "lucide-react";
 
 // CREATE POST EDITOR
 export default function PostEditor() {
   // TAKE USER FORM SESSION CONTEXT
   const { user } = useSession();
+
+  // USE MUTATION
+  const mutation = usePostSubmitMutation();
 
   // CONFIG THE EDITOR
   const editor = useEditor({
@@ -33,11 +38,13 @@ export default function PostEditor() {
     }) || "";
 
   // ON SUBMIT EDITOR OR FORM
-  async function onSubmit() {
+  function onSubmit() {
     // SEND DATA TO SERVER
-    await createPost(inputValues);
-    // CLEAR THE INPUT VALUES
-    editor?.commands.clearContent();
+    mutation.mutate(inputValues, {
+      onSuccess: () => {
+        editor?.commands.clearContent();
+      },
+    });
   }
 
   return (
@@ -55,7 +62,9 @@ export default function PostEditor() {
           disabled={!inputValues.trim()}
           className="min-w-20"
         >
-          Post
+          {
+            mutation.isPending ? <Loader2 className="animate-spin"/> : "Post"
+          }
         </Button>
       </div>
     </div>
