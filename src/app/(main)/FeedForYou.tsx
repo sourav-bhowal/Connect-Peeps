@@ -1,4 +1,5 @@
 "use client";
+import DeletePostDialogue from "@/components/posts/deletePostDialogue";
 import PostCard from "@/components/posts/postcard/PostCard";
 import PostsLodingSkeleton from "@/components/posts/PostsLoadingSkeleton";
 import InfiniteScrollContainer from "@/components/shared/InfiniteScrollContainer";
@@ -62,6 +63,10 @@ export default function FeedForYou() {
       {
         isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />
       }
+      <DeletePostDialogue
+        open
+        onClose={() => {}}
+        post={posts[0]} />
     </InfiniteScrollContainer>
   );
 }
