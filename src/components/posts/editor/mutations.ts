@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { createPost } from "./action";
 import { PostsPage } from "@/utils/types";
+import { useSession } from "@/app/(main)/SessionProvider";
 
 export function usePostSubmitMutation() {
   // TOAST
@@ -14,6 +15,9 @@ export function usePostSubmitMutation() {
 
   // QUERY CLIENT
   const queryClient = useQueryClient();
+
+  // Logged in user
+  const { user } = useSession();
 
   // MUTATION
   const mutation = useMutation({
@@ -24,7 +28,16 @@ export function usePostSubmitMutation() {
       // take the new post
 
       // filter the posts as per query key
-      const queryFilter: QueryFilters = { queryKey: ["post-feed", "for-you"] };
+      const queryFilter = {
+        queryKey: ["post-feed"],
+        predicate(query) {
+          return (
+            query.queryKey.includes("for-you") ||
+            (query.queryKey.includes("user-posts") &&
+              query.queryKey.includes(user?.id))
+          );
+        },
+      } satisfies QueryFilters;
       // cancel the ongoing queries
       await queryClient.cancelQueries(queryFilter);
       // set query manually
@@ -56,8 +69,8 @@ export function usePostSubmitMutation() {
       queryClient.invalidateQueries({
         queryKey: queryFilter.queryKey,
         predicate(query) {
-            return !query.state.data
-        }
+          return queryFilter.predicate(query) && !query.state.data;
+        },
       });
 
       // SHOW TOAST OF NEW POST

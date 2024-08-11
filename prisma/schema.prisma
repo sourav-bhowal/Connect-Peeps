@@ -23,7 +23,7 @@ model User {
   bio       String?
   createdAt DateTime  @default(now())
   sessions  Session[]
-  Post      Post[]
+  post      Post[]
   following Follow[]  @relation("Following")
   followers Follow[]  @relation("Followers")
 

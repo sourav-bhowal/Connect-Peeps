@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prismaDB";
 import { validateRequest } from "@/utils/auth";
-import { getUserData, userData } from "@/utils/types";
+import { getUserData } from "@/utils/types";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";

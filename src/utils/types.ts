@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { number } from "zod";
 
 // GET USER DATA
 export function getUserData(loggedInUserId: string) {
@@ -6,6 +7,8 @@ export function getUserData(loggedInUserId: string) {
     id: true,
     username: true,
     name: true,
+    bio: true,
+    createdAt: true,
     avatarUrl: true,
     followers: {
       where: {
@@ -17,11 +20,17 @@ export function getUserData(loggedInUserId: string) {
     },
     _count: {
       select: {
+        post: true,
         followers: true,
       },
     },
   } satisfies Prisma.UserSelect;
 }
+
+// TYPE OF USER DATA
+export type UserData = Prisma.UserGetPayload<{
+  select: ReturnType<typeof getUserData>;
+}>;
 
 // GET POST DATA
 export function getPostData(loggedInUserId: string) {
@@ -32,7 +41,7 @@ export function getPostData(loggedInUserId: string) {
   } satisfies Prisma.PostInclude;
 }
 
-// POST CARD DATA
+// POST CARD DATA TYPE
 export type PostCardData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostData>;
 }>;
