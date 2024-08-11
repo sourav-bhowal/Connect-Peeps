@@ -1,10 +1,10 @@
 "use server";
 import { prisma } from "@/lib/prismaDB";
 import { validateRequest } from "@/utils/auth";
-import { PostCardDataType } from "@/utils/types";
+import { getPostData, } from "@/utils/types";
 
 export async function deletePost(id: string) {
-    // take user from session
+  // take user from session
   const { user } = await validateRequest();
 
   // if no user
@@ -24,7 +24,7 @@ export async function deletePost(id: string) {
   // delete post
   const deletedPost = await prisma.post.delete({
     where: { id },
-    include: PostCardDataType
+    include: getPostData(user.id),
   });
 
   return deletedPost;

@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prismaDB";
 import { createPostSchema } from "@/lib/validations";
 import { validateRequest } from "@/utils/auth";
-import { PostCardDataType } from "@/utils/types";
+import { getPostData } from "@/utils/types";
 
 // CREATE POST SERVER
 export async function createPost(inputValues: string) {
@@ -21,7 +21,7 @@ export async function createPost(inputValues: string) {
       content,
       userId: user.id,
     },
-    include: PostCardDataType
+    include: getPostData(user.id),
   });
 
   return newPost;

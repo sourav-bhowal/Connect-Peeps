@@ -63,10 +63,6 @@ export default function FeedForYou() {
       {
         isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />
       }
-      <DeletePostDialogue
-        open
-        onClose={() => {}}
-        post={posts[0]} />
     </InfiniteScrollContainer>
   );
 }

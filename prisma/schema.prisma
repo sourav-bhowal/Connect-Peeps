@@ -24,6 +24,8 @@ model User {
   createdAt DateTime  @default(now())
   sessions  Session[]
   Post      Post[]
+  following Follow[]  @relation("Following")
+  followers Follow[]  @relation("Followers")
 
   @@map("users") // Table name of user model
 }
@@ -46,5 +48,16 @@ model Post {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("posts")  // Table name of posts model
+  @@map("posts") // Table name of posts model
+}
+
+// FOLLOW MODEL
+model Follow {
+  followerId  String
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("followers")
 }

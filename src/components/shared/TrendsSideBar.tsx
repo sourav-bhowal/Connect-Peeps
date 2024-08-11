@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prismaDB";
 import { validateRequest } from "@/utils/auth";
-import { userData } from "@/utils/types";
+import { getUserData, userData } from "@/utils/types";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -8,6 +8,7 @@ import UserAvatar from "./UserAvatar";
 import { Button } from "../ui/button";
 import { unstable_cache } from "next/cache";
 import { formatNumber } from "@/utils/topicsCount";
+import FollowButton from "./FollowButton";
 
 // TRENDS BAR
 export default function TrendsSideBar() {
@@ -33,8 +34,13 @@ async function WhoToFollow() {
       NOT: {
         id: user?.id,
       },
+      followers: {
+        none: {
+          followerId: user?.id,
+        },
+      },
     },
-    select: userData,
+    select: getUserData(user?.id as string),
     take: 5,
   });
 
@@ -57,7 +63,15 @@ async function WhoToFollow() {
               </p>
             </div>
           </Link>
-          <Button>Follow</Button>
+          <FollowButton
+            userId={user.id}
+            initialState={{
+              followers: user._count.followers,
+              isFollowedByUser: user.followers.some(
+                (follower) => follower.followerId === user.id,
+              ),
+            }}
+          />
         </div>
       ))}
     </div>
