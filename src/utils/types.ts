@@ -41,7 +41,7 @@ export function getPostData(loggedInUserId: string) {
   } satisfies Prisma.PostInclude;
 }
 
-// POST CARD DATA TYPE
+// TYPE OF POST DATA
 export type PostCardData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostData>;
 }>;

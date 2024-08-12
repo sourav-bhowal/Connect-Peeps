@@ -5,6 +5,8 @@ import { formatRelativeDate } from "@/utils/time";
 import { PostCardData } from "@/utils/types";
 import Link from "next/link";
 import MorePostButtons from "../MorePostButton";
+import LinkifyLinks from "@/components/links/LinkifyLinks";
+import UserToolTip from "@/components/shared/UserToolTip";
 
 // TYPE OF POSTCARD
 interface PostCardProps {
@@ -20,9 +22,11 @@ export default function PostCard({ post }: PostCardProps) {
     <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex justify-between gap-3">
         <div className="flex flex-wrap gap-3">
-          <Link href={`/users/${post.user.username}`}>
-            <UserAvatar avatarUrl={post.user.avatarUrl} />
-          </Link>
+          <UserToolTip user={post.user}>
+            <Link href={`/users/${post.user.username}`}>
+              <UserAvatar avatarUrl={post.user.avatarUrl} />
+            </Link>
+          </UserToolTip>
           <div>
             <Link
               href={`/users/${post.user.username}`}
@@ -46,7 +50,9 @@ export default function PostCard({ post }: PostCardProps) {
           />
         )}
       </div>
-      <div className="whitespace-pre-line break-words">{post.content}</div>
+      <LinkifyLinks>
+        <div className="whitespace-pre-line break-words">{post.content}</div>
+      </LinkifyLinks>
     </article>
   );
 }

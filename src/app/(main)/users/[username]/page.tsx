@@ -13,6 +13,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import UserPostsFeed from "./UserPostsFeed";
+import LinkifyLinks from "@/components/links/LinkifyLinks";
 
 // User Page Props
 interface UserPageProps {
@@ -104,9 +105,11 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
       {user.bio && (
         <>
           <hr />
-          <p className="overflow-hidden whitespace-pre-line break-words">
-            {user.bio}
-          </p>
+          <LinkifyLinks>
+            <p className="overflow-hidden whitespace-pre-line break-words">
+              {user.bio}
+            </p>
+          </LinkifyLinks>
         </>
       )}
     </div>
