@@ -44,12 +44,12 @@ export const createPostSchema = z.object({
     .trim()
     .min(5, "Content must be atleast 5 characters")
     .max(300, "Content must not exceed 300 characters"),
+  mediaIds: z.array(z.string()).max(5, "Max 5 media per post"),
 });
 
 // SCHEMA VALIDATIONS FOR FORMS
 export type SignUpSchemaType = z.infer<typeof signUpSchema>;
 export type SignInSchemaType = z.infer<typeof signInSchema>;
-
 
 // UPDATE USER SCHEMA
 export const updateUserSchema = z.object({

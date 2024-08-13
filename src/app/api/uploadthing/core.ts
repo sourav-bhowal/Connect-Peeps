@@ -8,7 +8,7 @@ const f = createUploadthing();
 
 // FileRouter to upload files and routes
 export const fileRouter = {
-  // upload file to uploadthing
+  // upload 1 avatar file to uploadthing
   avatar: f({
     image: {
       maxFileSize: "512KB",
@@ -29,7 +29,9 @@ export const fileRouter = {
       // if old avatar exists
       if (oldAvatarUrl) {
         // get key from url
-        const key = oldAvatarUrl.split(`/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`)[1];
+        const key = oldAvatarUrl.split(
+          `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+        )[1];
 
         // delete old avatar from uploadthing
         await new UTApi().deleteFiles(key);
@@ -53,6 +55,40 @@ export const fileRouter = {
 
       // return new avatar url to client
       return { avatarUrl: newAvatarUrl };
+    }),
+  // Upload multiple post media files to uploadthing
+  media: f({
+    image: {
+      maxFileSize: "32MB",
+      maxFileCount: 5,
+    },
+    video: {
+      maxFileSize: "64MB",
+      maxFileCount: 5,
+    },
+  })
+    // middle wares for user auth
+    .middleware(async () => {
+      const { user } = await validateRequest();
+      if (!user) throw new UploadThingError("Unauthorized");
+
+      return {};
+    })
+    // onUploadComplete save media files to DB
+    .onUploadComplete(async ({ file }) => {
+      const media = await prisma.media.create({
+        data: {
+          // secure url of the media
+          url: file.url.replace(
+            "/f/",
+            `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+          ),
+          // type of media
+          type: file.type.startsWith("image") ? "IMAGE" : "VIDEO",
+        },
+      });
+      // return media id to client
+      return {mediaId: media.id};
     }),
 } satisfies FileRouter;
 
