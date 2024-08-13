@@ -47,4 +47,4 @@ export const fileRouter = {
 
 
 // export app file route
-export type AppFileRoute = typeof fileRouter;
+export type AppFileRouter = typeof fileRouter;

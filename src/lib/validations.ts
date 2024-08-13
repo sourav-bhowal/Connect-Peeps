@@ -49,3 +49,25 @@ export const createPostSchema = z.object({
 // SCHEMA VALIDATIONS FOR FORMS
 export type SignUpSchemaType = z.infer<typeof signUpSchema>;
 export type SignInSchemaType = z.infer<typeof signInSchema>;
+
+
+// UPDATE USER SCHEMA
+export const updateUserSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(5, "Username must be at least 5 characters")
+    .max(32, "Username must not exceed 32 characters")
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "Username can only contain letters, _ , - and numbers ",
+    ),
+  bio: z
+    .string()
+    .trim()
+    .min(5, "Username must be at least 5 characters")
+    .max(200, "Bio must not exceed 200 characters"),
+});
+
+// SCHEMA VALIDATIONS FOR UPDATE FORM
+export type UpdateUserSchemaType = z.infer<typeof updateUserSchema>;

@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { number } from "zod";
 
 // GET USER DATA
 export function getUserData(loggedInUserId: string) {

@@ -14,6 +14,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import UserPostsFeed from "./UserPostsFeed";
 import LinkifyLinks from "@/components/links/LinkifyLinks";
+import EditProfileButton from "./EditProfileButton";
 
 // User Page Props
 interface UserPageProps {
@@ -96,8 +97,9 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
             <UserFollowerCount userId={user.id} initialState={followerInfo} />
           </div>
         </div>
+        {/* Edit Profile if logged in user is same as user profile otherwise follow/unfollow */}
         {user.id === loggedInUserId ? (
-          <Button>Edit Profile</Button>
+          <EditProfileButton user={user} />
         ) : (
           <FollowButton userId={user.id} initialState={followerInfo} />
         )}
