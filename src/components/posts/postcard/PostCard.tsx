@@ -7,6 +7,9 @@ import Link from "next/link";
 import MorePostButtons from "../MorePostButton";
 import LinkifyLinks from "@/components/links/LinkifyLinks";
 import UserToolTip from "@/components/shared/UserToolTip";
+import { Media } from "@prisma/client";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 // TYPE OF POSTCARD
 interface PostCardProps {
@@ -53,6 +56,67 @@ export default function PostCard({ post }: PostCardProps) {
       <LinkifyLinks>
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </LinkifyLinks>
+      {/* RENDER MEDIA PREVIEWS IF EXISTS */}
+      {
+        !!post.media.length && (
+          <PostCardMediaPreviews medias={post.media} />
+        )
+      }
     </article>
   );
+}
+
+// POST CARD MEDIA PREVIEWS COMPONENT PROPS
+interface PostCardMediaPreviewsProps {
+  medias: Media[];
+}
+
+// POST CARD MEDIA PREVIEWS COMPONENT
+function PostCardMediaPreviews({ medias }: PostCardMediaPreviewsProps) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3",
+        medias.length > 1 && "sm:grid sm:grid-cols-2",
+      )}
+    >
+      {/* MEDIA PREVIEW FOR EACH MEDIA IN POST */}
+      {medias.map((media) => (
+        <PostCardMediaPreview key={media.id} media={media} />
+      ))}
+    </div>
+  );
+}
+
+// POST CARD MEDIA PREVIEW COMPONENT PROPS
+interface PostCardMediaPreviewProps {
+  media: Media;
+}
+
+// POST CARD MEDIA PREVIEW COMPONENT
+function PostCardMediaPreview({ media }: PostCardMediaPreviewProps) {
+  // if media is image
+  if (media.type === "IMAGE") {
+    return (
+      <Image
+        src={media.url}
+        alt={"media"}
+        width={500}
+        height={500}
+        className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+      />
+    );
+  }
+
+  // if media is video
+  if (media.type === "VIDEO") {
+    return (
+      <div>
+        <video src={media.url} controls className="mx-auto size-fit max-h-[30rem] rounded-2xl" />
+      </div>
+    );
+  }
+
+  // if media is not supported
+  return <p className="text-destructive">Unsupported Media</p>;
 }

@@ -37,6 +37,7 @@ export function getPostData(loggedInUserId: string) {
     user: {
       select: getUserData(loggedInUserId),
     },
+    media: true,
   } satisfies Prisma.PostInclude;
 }
 

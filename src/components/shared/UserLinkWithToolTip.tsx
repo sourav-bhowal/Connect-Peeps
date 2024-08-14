@@ -1,5 +1,4 @@
 "use client";
-
 import { kyInstance } from "@/utils/ky";
 import { UserData } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";

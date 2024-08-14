@@ -11,7 +11,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "utfs.io",
-        port: "",
         pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
       },
     ],
