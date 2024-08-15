@@ -77,7 +77,7 @@ export default function useMediaUpload() {
       // show toast
       toast({
         title: "Error",
-        description: error.message,
+        description: "An error occurred while uploading your media.",
         variant: "destructive",
       });
     },

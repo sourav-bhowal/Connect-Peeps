@@ -37,13 +37,13 @@ export const fileRouter = {
         await new UTApi().deleteFiles(key);
       }
 
-      // secure url of the avatar
+      // Create Secure url of the avatar
       const newAvatarUrl = file.url.replace(
         "/f/",
         `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
       );
 
-      // save to DB
+      // update user avatar url and save to DB
       await prisma.user.update({
         where: {
           id: metadata.user.id,
