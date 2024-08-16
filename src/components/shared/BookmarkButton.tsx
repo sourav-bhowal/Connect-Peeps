@@ -1,5 +1,5 @@
 "use client";
-import { LikeInfo } from "@/utils/types";
+import { BookmarkInfo } from "@/utils/types";
 import { useToast } from "../ui/use-toast";
 import {
   QueryKey,
@@ -8,17 +8,20 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { kyInstance } from "@/utils/ky";
-import { Heart } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // LIKE BUTTON PROPS
-interface LikeButtonProps {
+interface BookmarkButtonProps {
   postId: string;
-  initialState: LikeInfo;
+  initialState: BookmarkInfo;
 }
 
 // LIKE BUTTON COMPONENT
-export default function LikeButton({ postId, initialState }: LikeButtonProps) {
+export default function BookmarkButton({
+  postId,
+  initialState,
+}: BookmarkButtonProps) {
   // Toast
   const { toast } = useToast();
 
@@ -26,42 +29,41 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
   const queryClient = useQueryClient();
 
   // Query key
-  const queryKey: QueryKey = ["like-info", postId];
+  const queryKey: QueryKey = ["bookmark-info", postId];
 
   // Like data
   const { data } = useQuery({
     queryKey: queryKey,
     queryFn: () =>
-      kyInstance.get(`/api/posts/likes/${postId}`).json<LikeInfo>(),
+      kyInstance.get(`/api/posts/bookmarks/${postId}`).json<BookmarkInfo>(),
     initialData: initialState,
     staleTime: Infinity,
   });
 
   // Mutate OPTIMISTICALLY
   const { mutate } = useMutation({
-    // API CALL conditionally like or unlike
+    // API CALL conditionally bookmark or unbookmark
     mutationFn: () =>
-      data.isLikedByUser
-        ? kyInstance.delete(`/api/posts/likes/${postId}`)
-        : kyInstance.post(`/api/posts/likes/${postId}`),
+      data.isBookmarkedByUser
+        ? kyInstance.delete(`/api/posts/bookmarks/${postId}`)
+        : kyInstance.post(`/api/posts/bookmarks/${postId}`),
 
     // OPTIMISTIC UPDATE
     onMutate: async () => {
       // toast
       toast({
-        description: `Post is ${data.isLikedByUser ? "unliked" : "liked"}.`,
-      })
+        description: `Post is ${data.isBookmarkedByUser ? "unbookmarked" : "bookmarked"}.`,
+      });
+
       // Cancel any outgoing queries & get latest query
       await queryClient.cancelQueries({ queryKey });
 
       // Snapshot previous value
-      const previousState = queryClient.getQueryData<LikeInfo>(queryKey);
+      const previousState = queryClient.getQueryData<BookmarkInfo>(queryKey);
 
       // Change the value in the query data manually
-      queryClient.setQueryData<LikeInfo>(queryKey, () => ({
-        likes:
-          (previousState?.likes || 0) + (previousState?.isLikedByUser ? -1 : 1),
-        isLikedByUser: !previousState?.isLikedByUser,
+      queryClient.setQueryData<BookmarkInfo>(queryKey, () => ({
+        isBookmarkedByUser: !previousState?.isBookmarkedByUser,
       }));
 
       // Return a context object with the snapshotted value
@@ -84,16 +86,12 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
 
   return (
     <button onClick={() => mutate()} className="flex items-center gap-2">
-      <Heart
+      <Bookmark
         className={cn(
           "size-5",
-          data.isLikedByUser && "fill-red-500 text-red-500",
+          data.isBookmarkedByUser && "fill-primary text-primary",
         )}
       />
-      <span className="text-sm font-medium tabular-nums">
-        {data?.likes || 0}
-        <span className="hidden sm:inline"> likes</span>
-      </span>
     </button>
   );
 }

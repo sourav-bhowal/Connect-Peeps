@@ -11,6 +11,7 @@ import { Media } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import LikeButton from "@/components/shared/LikeButton";
+import BookmarkButton from "@/components/shared/BookmarkButton";
 
 // TYPE OF POSTCARD
 interface PostCardProps {
@@ -61,16 +62,26 @@ export default function PostCard({ post }: PostCardProps) {
       {/* RENDER MEDIA PREVIEWS IF EXISTS */}
       {!!post.media.length && <PostCardMediaPreviews medias={post.media} />}
       <hr className="text-muted-foreground" />
-      {/* RENDER LIKES BUTTON */}
-      <LikeButton
-        postId={post.id}
-        initialState={{
-          likes: post._count.likes,
-          isLikedByUser: post.likes.some(
-            (like) => like.userId === loggedInUser.id,
-          ),
-        }}
-      />
+      {/* RENDER LIKES and BOOKMARK BUTTON */}
+      <div className="flex justify-between gap-5">
+        <LikeButton
+          postId={post.id}
+          initialState={{
+            likes: post._count.likes,
+            isLikedByUser: post.likes.some(
+              (like) => like.userId === loggedInUser.id,
+            ),
+          }}
+        />
+        <BookmarkButton
+          postId={post.id}
+          initialState={{
+            isBookmarkedByUser: post.bookmarks.some(
+              (bookmark) => bookmark.userId === loggedInUser.id,
+            ),
+          }}
+        />
+      </div>
     </article>
   );
 }

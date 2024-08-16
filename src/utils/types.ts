@@ -47,6 +47,15 @@ export function getPostData(loggedInUserId: string) {
         userId: true,
       },
     },
+    bookmarks: {
+      where: {
+        userId: loggedInUserId,
+      },
+      // we want the user id
+      select: {
+        userId: true,
+      },
+    },
     // get count of likes
     _count: {
       select: {
@@ -77,4 +86,9 @@ export interface FollowerInfo {
 export interface LikeInfo {
   likes: number;
   isLikedByUser: boolean;
+}
+
+// BOOKMARK INFO TYPE
+export interface BookmarkInfo {
+  isBookmarkedByUser: boolean;
 }
