@@ -12,6 +12,9 @@ import { Loader2 } from "lucide-react";
 import useMediaUpload from "./useMediaUpload";
 import MediaUploadButton from "./MediaUploadButton";
 import { MediaPreviews } from "./MediaPreview";
+import { useDropzone } from "@uploadthing/react";
+import { cn } from "@/lib/utils";
+import { ClipboardEvent } from "react";
 
 // CREATE POST EDITOR
 export default function PostEditor() {
@@ -30,6 +33,25 @@ export default function PostEditor() {
     isUploading,
     resetMediaUploads,
   } = useMediaUpload();
+
+  // DRAG AND DROP FUNCTION TO START MEDIA UPLOAD USING USEDROPZONE By uploadthing
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: startUpload,
+  });
+
+  // We have to ignore onClick event because of useDropzone
+  const { onClick, ...rootProps } = getRootProps();
+
+  // FUNCTION TO PASTE MEDIA TO EDITOR
+  function pasteMedia(e: ClipboardEvent<HTMLInputElement>) {
+    // Get files from clipboard data and start upload files
+    const files = Array.from(e.clipboardData.items)
+      .filter((item) => item.kind === "file")
+      .map((item) => item.getAsFile()) as File[];
+
+    // Start upload files
+    startUpload(files);
+  }
 
   // CONFIG THE EDITOR
   const editor = useEditor({
@@ -75,10 +97,18 @@ export default function PostEditor() {
     <div className="flex flex-col gap-5 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex gap-5">
         <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
-        <EditorContent
-          editor={editor}
-          className="max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-background px-5 py-3"
-        />
+        <div {...rootProps} className="w-full">
+          <EditorContent
+            editor={editor}
+            className={cn(
+              "max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-background px-5 py-3",
+              isDragActive && "outline-dashed",
+            )}
+            onPaste={pasteMedia}
+          />
+          {/* DRAG AND DROP INPUT */}
+          <input {...getInputProps()} />
+        </div>
       </div>
       {/* MEDIA PREVIEWS */}
       {!!medias.length && (

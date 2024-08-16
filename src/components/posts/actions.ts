@@ -30,7 +30,7 @@ export async function deletePost(id: string) {
 
   // Delete the media files of the post
   if (deletedPost) {
-    // Delete media files
+    // Delete media files from DB
     deletedPost.media.map(async (media) => {
       const deletedMedia = await prisma.media.delete({ where: { id: media.id } });
 
@@ -44,5 +44,6 @@ export async function deletePost(id: string) {
     });
   }
 
+  // Return deleted post
   return deletedPost;
 }

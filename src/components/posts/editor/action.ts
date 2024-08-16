@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prismaDB";
 import { createPostSchema } from "@/lib/validations";
 import { validateRequest } from "@/utils/auth";
 import { getPostData } from "@/utils/types";
+import { UTApi } from "uploadthing/server";
 
 // CREATE POST SERVER
 export async function createPost(inputValues: {
@@ -31,5 +32,23 @@ export async function createPost(inputValues: {
     include: getPostData(user.id),
   });
 
+  // If no post delete media files
+  if (!newPost) {
+    mediaIds.map(async (mediaId) => {
+      const deletedMedia = await prisma.media.delete({
+        where: { id: mediaId },
+      });
+
+      // Delete the media files from uploadthing
+      if (deletedMedia) {
+        const key = deletedMedia.url.split(
+          `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+        )[1];
+        await new UTApi().deleteFiles(key);
+      }
+    });
+  }
+
+  // RETURN POST
   return newPost;
 }
