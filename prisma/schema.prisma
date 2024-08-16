@@ -13,19 +13,21 @@ datasource db {
 
 // USER MODEL
 model User {
-  id        String    @id
-  username  String    @unique
+  id        String     @id
+  username  String     @unique
   name      String
-  email     String?   @unique
+  email     String?    @unique
   password  String?
-  googleId  String?   @unique
+  googleId  String?    @unique
   avatarUrl String?
   bio       String?
-  createdAt DateTime  @default(now())
+  createdAt DateTime   @default(now())
   sessions  Session[]
   post      Post[]
-  following Follow[]  @relation("Following")
-  followers Follow[]  @relation("Followers")
+  following Follow[]   @relation("Following")
+  followers Follow[]   @relation("Followers")
+  likes     Like[]
+  bookmarks Bookmark[]
 
   @@map("users") // Table name of user model
 }
@@ -42,12 +44,14 @@ model Session {
 
 // POSTS MODEL
 model Post {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   content   String
   userId    String
   media     Media[]
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes     Like[]
+  bookmarks Bookmark[]
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts") // Table name of posts model
 }
@@ -77,6 +81,33 @@ model Follow {
   followingId String
   following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
 
+  // id for the follow object will be created by mixing followerId and followingId
   @@unique([followerId, followingId])
   @@map("followers")
+}
+
+// LIKE MODEL
+model Like {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // id for the like object will be created by mixing userId and postId
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+// BOOKMARK MODEL
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  // id for the like object will be created by mixing userId and postId
+  @@unique([userId, postId])
+  @@map("bookmarks")
 }

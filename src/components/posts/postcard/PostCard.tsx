@@ -10,6 +10,7 @@ import UserToolTip from "@/components/shared/UserToolTip";
 import { Media } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import LikeButton from "@/components/shared/LikeButton";
 
 // TYPE OF POSTCARD
 interface PostCardProps {
@@ -19,7 +20,7 @@ interface PostCardProps {
 // POST CARD COMPONENT
 export default function PostCard({ post }: PostCardProps) {
   // user from session
-  const { user } = useSession();
+  const { user: loggedInUser } = useSession();
 
   return (
     <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
@@ -47,7 +48,7 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         {/* Show more button if post owner */}
-        {post.user.id === user.id && (
+        {post.user.id === loggedInUser.id && (
           <MorePostButtons
             post={post}
             className="opacity-0 transition-opacity group-hover/post:opacity-100"
@@ -58,11 +59,18 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </LinkifyLinks>
       {/* RENDER MEDIA PREVIEWS IF EXISTS */}
-      {
-        !!post.media.length && (
-          <PostCardMediaPreviews medias={post.media} />
-        )
-      }
+      {!!post.media.length && <PostCardMediaPreviews medias={post.media} />}
+      <hr className="text-muted-foreground" />
+      {/* RENDER LIKES BUTTON */}
+      <LikeButton
+        postId={post.id}
+        initialState={{
+          likes: post._count.likes,
+          isLikedByUser: post.likes.some(
+            (like) => like.userId === loggedInUser.id,
+          ),
+        }}
+      />
     </article>
   );
 }
@@ -113,7 +121,11 @@ function PostCardMediaPreview({ media }: PostCardMediaPreviewProps) {
   if (media.type === "VIDEO") {
     return (
       <div>
-        <video src={media.url} controls className="mx-auto size-fit max-h-[30rem] rounded-2xl" />
+        <video
+          src={media.url}
+          controls
+          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        />
       </div>
     );
   }

@@ -12,7 +12,7 @@ interface FollowButtonProps {
   initialState: FollowerInfo;
 }
 
-// FOLLOW BUTTON Fn
+// OPTIMISTIC FOLLOW BUTTON Fn
 export default function FollowButton({
   userId,
   initialState,
@@ -25,7 +25,7 @@ export default function FollowButton({
   const queryClient = useQueryClient();
   // query key
   const queryKey: QueryKey = ["follower-info", userId];
-  // mutate
+  // mutate Optimistically
   const { mutate } = useMutation({
     // API CALL
     mutationFn: () => {
