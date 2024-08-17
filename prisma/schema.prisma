@@ -28,6 +28,7 @@ model User {
   followers Follow[]   @relation("Followers")
   likes     Like[]
   bookmarks Bookmark[]
+  comments  Comment[]
 
   @@map("users") // Table name of user model
 }
@@ -47,16 +48,17 @@ model Post {
   id        String     @id @default(cuid())
   content   String
   userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   media     Media[]
   likes     Like[]
   bookmarks Bookmark[]
+  comments  Comment[]
   createdAt DateTime   @default(now())
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts") // Table name of posts model
 }
 
-// ATTACHMENT MODELS
+// MEDIA MODEL
 model Media {
   id        String    @id @default(cuid())
   postId    String?
@@ -110,4 +112,17 @@ model Bookmark {
   // id for the like object will be created by mixing userId and postId
   @@unique([userId, postId])
   @@map("bookmarks")
+}
+
+// COMMENT MODEL
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("comments")
 }

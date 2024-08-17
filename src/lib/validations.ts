@@ -37,6 +37,10 @@ export const signInSchema = z.object({
     .max(32, "Password must not exceed 32 characters"),
 });
 
+// SCHEMA VALIDATIONS FOR FORMS
+export type SignUpSchemaType = z.infer<typeof signUpSchema>;
+export type SignInSchemaType = z.infer<typeof signInSchema>;
+
 // POST SCHEMA
 export const createPostSchema = z.object({
   content: z
@@ -46,10 +50,6 @@ export const createPostSchema = z.object({
     .max(300, "Content must not exceed 300 characters"),
   mediaIds: z.array(z.string()).max(5, "Max 5 media per post"),
 });
-
-// SCHEMA VALIDATIONS FOR FORMS
-export type SignUpSchemaType = z.infer<typeof signUpSchema>;
-export type SignInSchemaType = z.infer<typeof signInSchema>;
 
 // UPDATE USER SCHEMA
 export const updateUserSchema = z.object({
@@ -71,3 +71,13 @@ export const updateUserSchema = z.object({
 
 // SCHEMA VALIDATIONS FOR UPDATE FORM
 export type UpdateUserSchemaType = z.infer<typeof updateUserSchema>;
+
+
+// COMMENT SCHEMA
+export const createCommentSchema = z.object({
+  content: z
+    .string()
+    .trim()
+    .min(5, "Content must be atleast 5 characters")
+    .max(300, "Content must not exceed 300 characters"),
+});

@@ -60,6 +60,7 @@ export function getPostData(loggedInUserId: string) {
     _count: {
       select: {
         likes: true,
+        comments: true,
       },
     },
   } satisfies Prisma.PostInclude;
@@ -70,10 +71,30 @@ export type PostCardData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostData>;
 }>;
 
+// GET COMMENT DATA
+export function getCommentData(loggedInUserId: string) {
+  return {
+    user: {
+      select: getUserData(loggedInUserId),
+    },
+  } satisfies Prisma.CommentInclude;
+}
+
+// TYPE OF COMMENT DATA
+export type CommentData = Prisma.CommentGetPayload<{
+  include: ReturnType<typeof getCommentData>;
+}>;
+
 // POSTS PAGE TYPE
 export interface PostsPage {
   posts: PostCardData[];
   nextCursor: string | null;
+}
+
+// COMMENT PAGE TYPE
+export interface CommentsPage {
+  comments: CommentData[];
+  previousCursor: string | null;
 }
 
 // FOLLOW INFO TYPE

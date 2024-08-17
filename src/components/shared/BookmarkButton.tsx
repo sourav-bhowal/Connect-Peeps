@@ -31,7 +31,7 @@ export default function BookmarkButton({
   // Query key
   const queryKey: QueryKey = ["bookmark-info", postId];
 
-  // Like data
+  // Bookmark data
   const { data } = useQuery({
     queryKey: queryKey,
     queryFn: () =>

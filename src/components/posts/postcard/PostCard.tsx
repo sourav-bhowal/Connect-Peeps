@@ -12,6 +12,9 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import LikeButton from "@/components/shared/LikeButton";
 import BookmarkButton from "@/components/shared/BookmarkButton";
+import { useState } from "react";
+import { MessageSquare } from "lucide-react";
+import Comments from "../comments/Comments";
 
 // TYPE OF POSTCARD
 interface PostCardProps {
@@ -20,8 +23,11 @@ interface PostCardProps {
 
 // POST CARD COMPONENT
 export default function PostCard({ post }: PostCardProps) {
-  // user from session
+  // User from session
   const { user: loggedInUser } = useSession();
+
+  // State for comments
+  const [showComments, setShowComments] = useState(false);
 
   return (
     <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
@@ -62,17 +68,23 @@ export default function PostCard({ post }: PostCardProps) {
       {/* RENDER MEDIA PREVIEWS IF EXISTS */}
       {!!post.media.length && <PostCardMediaPreviews medias={post.media} />}
       <hr className="text-muted-foreground" />
-      {/* RENDER LIKES and BOOKMARK BUTTON */}
+      {/* RENDER LIKES, COMMENTS and BOOKMARK BUTTON */}
       <div className="flex justify-between gap-5">
-        <LikeButton
-          postId={post.id}
-          initialState={{
-            likes: post._count.likes,
-            isLikedByUser: post.likes.some(
-              (like) => like.userId === loggedInUser.id,
-            ),
-          }}
-        />
+        <div className="flex items-center gap-5">
+          <LikeButton
+            postId={post.id}
+            initialState={{
+              likes: post._count.likes,
+              isLikedByUser: post.likes.some(
+                (like) => like.userId === loggedInUser.id,
+              ),
+            }}
+          />
+          <PostCardCommentButton
+            post={post}
+            onClick={() => setShowComments(!showComments)}
+          />
+        </div>
         <BookmarkButton
           postId={post.id}
           initialState={{
@@ -82,6 +94,8 @@ export default function PostCard({ post }: PostCardProps) {
           }}
         />
       </div>
+      {/* RENDER COMMENTS */}
+      {showComments && <Comments post={post} />}
     </article>
   );
 }
@@ -143,4 +157,23 @@ function PostCardMediaPreview({ media }: PostCardMediaPreviewProps) {
 
   // if media is not supported
   return <p className="text-destructive">Unsupported Media</p>;
+}
+
+// POST CARD COMMENT BUTTON PROPS
+interface PostCardCommentButtonProps {
+  post: PostCardData;
+  onClick: () => void;
+}
+
+// POST CARD COMMENT BUTTON COMPONENT
+function PostCardCommentButton({ post, onClick }: PostCardCommentButtonProps) {
+  return (
+    <button onClick={onClick} className="flex items-center gap-2">
+      <MessageSquare className="size-5" />
+      <span className="text-sm font-medium tabular-nums">
+        {post._count.comments}{" "}
+        <span className="hidden sm:inline">Comments</span>
+      </span>
+    </button>
+  );
 }

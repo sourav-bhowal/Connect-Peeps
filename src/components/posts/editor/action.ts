@@ -9,7 +9,7 @@ import { UTApi } from "uploadthing/server";
 export async function createPost(inputValues: {
   content: string;
   mediaIds: string[];
-}) {
+}) { 
   // GET USER FROM SESSION
   const { user } = await validateRequest();
 
