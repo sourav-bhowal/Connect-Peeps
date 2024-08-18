@@ -4,11 +4,11 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { kyInstance } from "@/utils/ky";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-// import { useSession } from "@/app/(main)/SessionProvider";
+import { useSession } from "@/app/(main)/SessionProvider";
 import UserAvatar from "@/components/shared/UserAvatar";
 import UserToolTip from "@/components/shared/UserToolTip";
 import { formatRelativeDate } from "@/utils/time";
-// import MoreCommentButtons from "./MoreCommentButton";
+import MoreCommentButtons from "./MoreCommentButton";
 import Link from "next/link";
 
 // COMMENTS PROPS
@@ -84,7 +84,7 @@ interface CommentProps {
 // COMMENT COMPONENT
 export function Comment({ comment }: CommentProps) {
   // User from session
-  // const { user: loggedInUser } = useSession();
+  const { user: loggedInUser } = useSession();
   return (
     <div className="group/comment flex gap-3 py-3">
       <span className="hidden sm:inline">
@@ -108,12 +108,12 @@ export function Comment({ comment }: CommentProps) {
         </div>
         <p>{comment.content}</p>
       </div>
-      {/* {comment.user.id === loggedInUser.id && (
+      {comment.user.id === loggedInUser.id && (
         <MoreCommentButtons
           comment={comment}
           className="ms-auto opacity-0 transition-opacity group-hover/comment:opacity-100"
         />
-      )} */}
+      )}
     </div>
   );
 }

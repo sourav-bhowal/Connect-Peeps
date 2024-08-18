@@ -22,7 +22,7 @@ export function useDeleteCommentMutation() {
     // On success do this
     onSuccess: async (deletedComment) => {
       // query key
-      const queryKey: QueryKey = ["post-comments", deletedComment.id];
+      const queryKey: QueryKey = ["post-comments", deletedComment.postId];
 
       // cancel the ongoing queries
       await queryClient.cancelQueries({ queryKey });

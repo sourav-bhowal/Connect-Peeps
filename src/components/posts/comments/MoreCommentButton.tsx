@@ -39,11 +39,11 @@ export default function MoreCommentButtons({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DeleteCommentDialog
+      {/* <DeleteCommentDialog
         comment={comment}
         open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
-      />
+      /> */}
     </>
   );
 }

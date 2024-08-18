@@ -1,6 +1,6 @@
 import { CommentData } from "@/utils/types";
 import { useDeleteCommentMutation } from "./mutations";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../ui/button";
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../../../ui/dialog";
 
 // TYPE
 interface DeleteCommentDialogProps {
@@ -58,7 +58,6 @@ export default function DeleteCommentDialog({
             ) : (
               "Delete"
             )}
-            DialogFooter={}
           </Button>
           <Button
             variant={"outline"}
