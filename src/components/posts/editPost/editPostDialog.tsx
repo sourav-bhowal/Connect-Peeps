@@ -51,6 +51,7 @@ export default function EditPostDialog({
     // mutate
     mutation.mutate(
       { content: values.content, postId: post.id },
+      // On success close dialog
       {
         onSuccess: () => {
           onOpenChange(false);
@@ -69,7 +70,7 @@ export default function EditPostDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 py-4"
+            className="space-y-6 py-2"
           >
             <FormField
               control={form.control}

@@ -1,4 +1,3 @@
-// Edit post mutation
 import { useToast } from "@/components/ui/use-toast";
 import {
   InfiniteData,
@@ -10,6 +9,7 @@ import { editPost } from "./actions";
 import { useSession } from "@/app/(main)/SessionProvider";
 import { PostsPage } from "@/utils/types";
 
+// Edit post mutation
 export function useEditPostMutation() {
   // toast
   const { toast } = useToast();
