@@ -1,4 +1,4 @@
-import { PostCardData, PostsPage } from "@/utils/types";
+import { PostsPage } from "@/utils/types";
 import { useToast } from "../ui/use-toast";
 import {
   InfiniteData,
@@ -9,6 +9,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { deletePost } from "./actions";
 
+// DELETE POST MUTATION
 export function useDeletePostMutation() {
   // TOAST
   const { toast } = useToast();
@@ -21,7 +22,9 @@ export function useDeletePostMutation() {
 
   // Mutation
   const mutation = useMutation({
+    // delete post
     mutationFn: deletePost,
+    // On success do this
     onSuccess: async (deletedPost) => {
       const queryFilter: QueryFilters = { queryKey: ["post-feed"] };
 
@@ -50,6 +53,7 @@ export function useDeletePostMutation() {
         router.push("/");
       }
     },
+    // on error do this
     onError(error) {
       console.log(error);
       toast({
@@ -59,5 +63,6 @@ export function useDeletePostMutation() {
     },
   });
 
+  // return mutation
   return mutation;
 }

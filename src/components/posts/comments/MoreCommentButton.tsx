@@ -1,24 +1,24 @@
-import { PostCardData } from "@/utils/types";
+import { CommentData } from "@/utils/types";
 import { useState } from "react";
-import DeletePostDialogue from "./deletePostDialogue";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+} from "../../ui/dropdown-menu";
+import { Button } from "../../ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
+import DeleteCommentDialog from "./commentDelete/deleteCommentDialog";
 
-interface MorePostButtonProps {
-  post: PostCardData;
+interface MoreCommentButtonProps {
+  comment: CommentData;
   className?: string;
 }
 
-export default function MorePostButtons({
-  post,
+export default function MoreCommentButtons({
+  comment,
   className,
-}: MorePostButtonProps) {
+}: MoreCommentButtonProps) {
   // Show delete dailog state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -39,8 +39,8 @@ export default function MorePostButtons({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DeletePostDialogue
-        post={post}
+      <DeleteCommentDialog
+        comment={comment}
         open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
       />

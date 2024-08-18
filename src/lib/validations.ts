@@ -78,6 +78,6 @@ export const createCommentSchema = z.object({
   content: z
     .string()
     .trim()
-    .min(5, "Content must be atleast 5 characters")
+    .min(2, "Content must be atleast 2 characters")
     .max(300, "Content must not exceed 300 characters"),
 });
