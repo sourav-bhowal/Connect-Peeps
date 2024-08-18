@@ -28,7 +28,7 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
   // Query key
   const queryKey: QueryKey = ["like-info", postId];
 
-  // Like data
+  // Like data from use query
   const { data } = useQuery({
     queryKey: queryKey,
     queryFn: () =>

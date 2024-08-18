@@ -10,6 +10,7 @@ export async function GET(
   try {
     // get user
     const { user: loggedInUser } = await validateRequest();
+
     // if not logged in
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -65,25 +66,56 @@ export async function POST(
   try {
     // get user
     const { user: loggedInUser } = await validateRequest();
+
     // if not logged in
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // upsert will create a like if u dont like otherwise ignore it
-    await prisma.like.upsert({
-      where: {
-        userId_postId: {
+    // find post
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: {
+        userId: true,
+      },
+    });
+
+    // if post not found
+    if (!post) {
+      return Response.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    // create transaction
+    await prisma.$transaction([
+      // upsert will create a like if u dont like otherwise ignore it
+      prisma.like.upsert({
+        where: {
+          userId_postId: {
+            userId: loggedInUser.id,
+            postId,
+          },
+        },
+        create: {
           userId: loggedInUser.id,
           postId,
         },
-      },
-      create: {
-        userId: loggedInUser.id,
-        postId,
-      },
-      update: {},
-    });
+        update: {},
+      }),
+
+      // send notification if post is not by logged in user
+      ...(loggedInUser.id !== post.userId
+        ? [
+            prisma.notification.create({
+              data: {
+                issuerId: loggedInUser.id,
+                recipientId: post.userId,
+                postId,
+                type: "LIKE",
+              },
+            }),
+          ]
+        : []),
+    ]);
 
     // Return success
     return new Response();
@@ -105,14 +137,39 @@ export async function DELETE(
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    // delete like
-    await prisma.like.deleteMany({
-      where: {
-        userId: loggedInUser.id,
-        postId,
+    // find post
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: {
+        userId: true,
       },
     });
+
+    // if post not found
+    if (!post) {
+      return Response.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    // delete transaction
+    await prisma.$transaction([
+      // delete like
+      prisma.like.deleteMany({
+        where: {
+          userId: loggedInUser.id,
+          postId,
+        },
+      }),
+
+      // send notification if post is not by logged in user
+      prisma.notification.deleteMany({
+        where: {
+          issuerId: loggedInUser.id,
+          recipientId: post.userId,
+          postId,
+          type: "LIKE",
+        },
+      }),
+    ]);
 
     // Return success
     return new Response();

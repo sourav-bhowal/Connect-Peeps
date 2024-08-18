@@ -13,22 +13,24 @@ datasource db {
 
 // USER MODEL
 model User {
-  id        String     @id
-  username  String     @unique
-  name      String
-  email     String?    @unique
-  password  String?
-  googleId  String?    @unique
-  avatarUrl String?
-  bio       String?
-  createdAt DateTime   @default(now())
-  sessions  Session[]
-  post      Post[]
-  following Follow[]   @relation("Following")
-  followers Follow[]   @relation("Followers")
-  likes     Like[]
-  bookmarks Bookmark[]
-  comments  Comment[]
+  id                    String         @id
+  username              String         @unique
+  name                  String
+  email                 String?        @unique
+  password              String?
+  googleId              String?        @unique
+  avatarUrl             String?
+  bio                   String?
+  createdAt             DateTime       @default(now())
+  sessions              Session[]
+  post                  Post[]
+  following             Follow[]       @relation("Following")
+  followers             Follow[]       @relation("Followers")
+  likes                 Like[]
+  bookmarks             Bookmark[]
+  comments              Comment[]
+  recievedNotifications Notification[] @relation("Recipient")
+  issuedNotifications   Notification[] @relation("Issuer")
 
   @@map("users") // Table name of user model
 }
@@ -43,17 +45,18 @@ model Session {
   @@map("sessions") // Table name of session model
 }
 
-// POSTS MODEL
+// POST MODEL
 model Post {
-  id        String     @id @default(cuid())
-  content   String
-  userId    String
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  media     Media[]
-  likes     Like[]
-  bookmarks Bookmark[]
-  comments  Comment[]
-  createdAt DateTime   @default(now())
+  id                  String         @id @default(cuid())
+  content             String
+  userId              String
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media               Media[]
+  likes               Like[]
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  createdAt           DateTime       @default(now())
+  linkedNotifications Notification[]
 
   @@map("posts") // Table name of posts model
 }
@@ -67,10 +70,10 @@ model Media {
   url       String
   createdAT DateTime  @default(now())
 
-  @@map("post_media")
+  @@map("post_media") // Table name of media model
 }
 
-// ENUM
+// ENUM FOR MEDIA TYPE
 enum MediaType {
   IMAGE
   VIDEO
@@ -85,7 +88,7 @@ model Follow {
 
   // id for the follow object will be created by mixing followerId and followingId
   @@unique([followerId, followingId])
-  @@map("followers")
+  @@map("followers") // Table name of follow model
 }
 
 // LIKE MODEL
@@ -97,7 +100,7 @@ model Like {
 
   // id for the like object will be created by mixing userId and postId
   @@unique([userId, postId])
-  @@map("likes")
+  @@map("likes") // Table name of like model
 }
 
 // BOOKMARK MODEL
@@ -111,7 +114,7 @@ model Bookmark {
 
   // id for the like object will be created by mixing userId and postId
   @@unique([userId, postId])
-  @@map("bookmarks")
+  @@map("bookmarks") // Table name of bookmark model
 }
 
 // COMMENT MODEL
@@ -124,5 +127,28 @@ model Comment {
   post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
-  @@map("comments")
+  @@map("comments") // Table name of comment model
+}
+
+// NOTIFICATION MODEL
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuerId    String
+  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  postId      String?
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  @@map("notifications") // Table name of notification model
+}
+
+// NOTIFICATION TYPE
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
 }

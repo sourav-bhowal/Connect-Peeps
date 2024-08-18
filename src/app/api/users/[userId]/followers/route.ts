@@ -58,25 +58,37 @@ export async function POST(
   try {
     // get user
     const { user: loggedInUser } = await validateRequest();
-
+    // if not logged in
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // upsert will create a follow if u dont follow otherwise ignore it
-    await prisma.follow.upsert({
-      where: {
-        followerId_followingId: {
+    // create transaction
+    await prisma.$transaction([
+      // upsert will create a follow if u dont follow otherwise ignore it
+      prisma.follow.upsert({
+        where: {
+          followerId_followingId: {
+            followerId: loggedInUser.id,
+            followingId: userId,
+          },
+        },
+        create: {
           followerId: loggedInUser.id,
           followingId: userId,
         },
-      },
-      create: {
-        followerId: loggedInUser.id,
-        followingId: userId,
-      },
-      update: {},
-    });
+        update: {},
+      }),
+
+      // send notification
+      prisma.notification.create({
+        data: {
+          type: "FOLLOW",
+          issuerId: loggedInUser.id,
+          recipientId: userId,
+        },
+      }),
+    ]);
 
     return new Response();
   } catch (error) {
@@ -85,10 +97,11 @@ export async function POST(
   }
 }
 
-
 // DELETE A FOLLOWER
-export async function DELETE(request: Request,
-  { params: { userId } }: { params: { userId: string } }) {
+export async function DELETE(
+  request: Request,
+  { params: { userId } }: { params: { userId: string } },
+) {
   try {
     // get user
     const { user: loggedInUser } = await validateRequest();
@@ -97,13 +110,26 @@ export async function DELETE(request: Request,
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // delete a follow
-    await prisma.follow.deleteMany({
-      where: {
-        followerId: loggedInUser.id,
-        followingId: userId,
-      }
-    });
+    // delete transaction
+    await prisma.$transaction([
+      // delete a follow
+      prisma.follow.deleteMany({
+        where: {
+          followerId: loggedInUser.id,
+          followingId: userId,
+        },
+      }),
+
+      // send notification
+      prisma.notification.create({
+        data: {
+          type: "FOLLOW",
+          issuerId: loggedInUser.id,
+          recipientId: userId,
+        },
+      }),
+    ]);
+
     return new Response();
   } catch (error) {
     console.log(error);
