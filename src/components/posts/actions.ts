@@ -32,13 +32,16 @@ export async function deletePost(id: string) {
   if (deletedPost) {
     // Delete media files from DB
     deletedPost.media.map(async (media) => {
-      const deletedMedia = await prisma.media.delete({ where: { id: media.id } });
+      const deletedMedia = await prisma.media.delete({
+        where: { id: media.id },
+      });
 
       // Delete the media files from uploadthing
       if (deletedMedia) {
         // Delete media files from uploadthing
-        const key = deletedMedia.url
-          .split(`/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`)[1];
+        const key = deletedMedia.url.split(
+          `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+        )[1];
         await new UTApi().deleteFiles(key);
       }
     });

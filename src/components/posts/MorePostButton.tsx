@@ -8,7 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import EditPostDialog from "./editPost/editPostDialog";
 
 interface MorePostButtonProps {
   post: PostCardData;
@@ -21,6 +22,7 @@ export default function MorePostButtons({
 }: MorePostButtonProps) {
   // Show delete dailog state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   return (
     <>
@@ -31,6 +33,12 @@ export default function MorePostButtons({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+            <span className="flex items-center gap-3 text-primary">
+              <Edit className="size-4" />
+              Edit
+            </span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
             <span className="flex items-center gap-3 text-destructive">
               <Trash2 className="size-4" />
@@ -43,6 +51,11 @@ export default function MorePostButtons({
         post={post}
         open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
+      />
+      <EditPostDialog
+       post={post}
+       open={showEditDialog}
+       onOpenChange={setShowEditDialog}
       />
     </>
   );
