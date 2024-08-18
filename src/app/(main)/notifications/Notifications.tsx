@@ -63,11 +63,12 @@ export default function MyNotifications() {
   // flat map the notifications
   const notifications = data?.pages.flatMap((page) => page.notifications) || [];
 
-  // RENDERING POSTS
+  // RENDERING Notifications
   if (status === "pending") {
     return <PostsLodingSkeleton />;
   }
 
+  // IF THERE ARE NO NOTIFICATIONS
   if (status === "success" && !notifications.length && !hasNextPage) {
     return (
       <p className="text-center text-muted-foreground">
