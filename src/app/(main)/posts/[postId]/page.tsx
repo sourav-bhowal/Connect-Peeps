@@ -53,6 +53,40 @@ export async function generateMetadata({
   };
 }
 
+// Post Details page
+export default async function Page({
+  params: { postId },
+}: PostDetailsPageProps) {
+  // get user from session
+  const { user } = await validateRequest();
+  // if user not logged in
+  if (!user) {
+    return (
+      <p className="text-destructive">
+        You need to be logged in to view this page.
+      </p>
+    );
+  }
+  // Get the post
+  const post = await fetchPost(postId, user.id);
+
+  // Render the post
+  return (
+    <main className="flex w-full min-w-0 gap-5">
+      <div className="w-full min-w-0 space-y-5">
+        {/* Post Card */}
+        <PostCard post={post as PostCardData} />
+      </div>
+      <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
+        {/* Suspence helps to load the component itself without blocking the ui */}
+        <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
+          <PostDetailsSidebar user={post?.user as UserData} />
+        </Suspense>
+      </div>
+    </main>
+  );
+}
+
 // Inteface for Post details sidebar
 interface PostDetailsSidebarProps {
   user: UserData;
@@ -62,8 +96,7 @@ interface PostDetailsSidebarProps {
 async function PostDetailsSidebar({ user }: PostDetailsSidebarProps) {
   // Get the user
   const { user: loggedInUser } = await validateRequest();
-  // artificial delay
-  //   await new Promise((resolve) => setTimeout(resolve, 5000));
+  
   // if user not logged in
   if (!loggedInUser) return null;
 
@@ -105,39 +138,5 @@ async function PostDetailsSidebar({ user }: PostDetailsSidebarProps) {
         />
       )}
     </div>
-  );
-}
-
-// Post Details page
-export default async function PostDetailsPage({
-  params: { postId },
-}: PostDetailsPageProps) {
-  // get user from session
-  const { user } = await validateRequest();
-  // if user not logged in
-  if (!user) {
-    return (
-      <p className="text-destructive">
-        You need to be logged in to view this page.
-      </p>
-    );
-  }
-  // Get the post
-  const post = await fetchPost(postId, user.id);
-
-  // Render the post
-  return (
-    <main className="flex w-full min-w-0 gap-5">
-      <div className="w-full min-w-0 space-y-5">
-        {/* Post Card */}
-        <PostCard post={post as PostCardData} />
-      </div>
-      <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
-        {/* Suspence helps to load the component itself without blocking the ui */}
-        <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
-          <PostDetailsSidebar user={post?.user as UserData} />
-        </Suspense>
-      </div>
-    </main>
   );
 }
