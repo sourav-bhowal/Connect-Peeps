@@ -59,7 +59,7 @@ interface PostDetailsSidebarProps {
 }
 
 // Post Details Sidebar
-export async function PostDetailsSidebar({ user }: PostDetailsSidebarProps) {
+async function PostDetailsSidebar({ user }: PostDetailsSidebarProps) {
   // Get the user
   const { user: loggedInUser } = await validateRequest();
   // artificial delay
