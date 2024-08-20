@@ -8,7 +8,7 @@ import {
 } from "../../ui/dropdown-menu";
 import { Button } from "../../ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
-import DeleteCommentDialog from "./commentDelete/DeleteCommentDialog";
+// import DeleteCommentDialog from "./commentDelete/DeleteCommentDialog";
 
 interface MoreCommentButtonProps {
   comment: CommentData;
