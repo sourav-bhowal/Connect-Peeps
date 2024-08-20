@@ -7,8 +7,13 @@ import { PostsPage } from "@/utils/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-// BOOKMARK FEED USING REACT QUERY
-export default function MyBookmarks() {
+// PROPS
+interface SearchResultsProps {
+  query: string;
+}
+
+// SEARCH RESULTS
+export default function SearchResults({ query }: SearchResultsProps) {
   // GET POSTS USING REACT QUERY INFINTE SCROLL
   const {
     data,
@@ -18,16 +23,20 @@ export default function MyBookmarks() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "bookmarks"],
+    // query client key
+    queryKey: ["post-feed", "search", query],
     queryFn: ({ pageParam }) =>
       kyInstance
-        .get(
-          "/api/posts/bookmarks/my-bookmarks",
-          pageParam ? { searchParams: { cursor: pageParam } } : {},
-        )
+        .get("/api/search", {
+          searchParams: {
+            query: query,
+            ...(pageParam ? { cursor: pageParam } : {}),
+          },
+        })
         .json<PostsPage>(),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    gcTime: 0,
   });
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
@@ -38,30 +47,28 @@ export default function MyBookmarks() {
   }
 
   if (status === "success" && !posts.length && !hasNextPage) {
-    return <p className="text-center text-muted-foreground">
-      No bookmarks.
-    </p>
+    return <p className="text-center text-muted-foreground">No posts found.</p>;
   }
 
   // IF THERE IS AN ERROR
   if (status === "error") {
     return (
       <p className="text-center text-destructive">
-        An error occured while loading bookmarks.
+        An error occured while loading the posts.
       </p>
     );
   }
 
   // RENDER POSTS
   return (
-    <InfiniteScrollContainer className="space-y-5"
-    onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}>
+    <InfiniteScrollContainer
+      className="space-y-5"
+      onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
+    >
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
-      {
-        isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />
-      }
+      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
     </InfiniteScrollContainer>
   );
 }

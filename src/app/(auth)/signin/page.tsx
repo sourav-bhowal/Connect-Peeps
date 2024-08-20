@@ -3,6 +3,7 @@ import SignInForm from "./SignInForm";
 import Link from "next/link";
 import Image from "next/image";
 import loginImage from "@/assets/login-image.jpg";
+import GoogleLoginButton from "../GoogleLoginButton";
 
 // METADATA
 export const metadata: Metadata = {
@@ -19,6 +20,12 @@ export default function SignInPage() {
             Login to ConnectPeeps
           </h1>
           <div className="space-y-5">
+            <GoogleLoginButton />
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-muted" />
+              <span>OR</span>
+              <div className="h-px flex-1 bg-muted" />
+            </div>
             <SignInForm />
             <Link href="/signup" className="block text-center hover:underline">
               Don&apos;t have an account? Sign up

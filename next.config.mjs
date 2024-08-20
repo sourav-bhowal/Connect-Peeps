@@ -15,6 +15,14 @@ const nextConfig = {
       },
     ],
   },
+  rewrites: () => {
+    return [
+      {
+        source: "/hastag/:tag",
+        destination: "/search?query=%23:tag",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
