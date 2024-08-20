@@ -2,12 +2,15 @@ import {
   ChannelList,
   ChannelPreviewMessenger,
   ChannelPreviewUIComponentProps,
+  useChatContext,
 } from "stream-chat-react";
 import { useSession } from "../SessionProvider";
 import { Button } from "@/components/ui/button";
 import { MailPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import NewChatDialogBox from "./NewChatDialogBox";
+import { useQueryClient } from "@tanstack/react-query";
 
 // ChatSideBar Props
 interface ChatSideBarProps {
@@ -15,9 +18,25 @@ interface ChatSideBarProps {
   onClose: () => void;
 }
 
+// CHAT SIDE BAR COMPONENT
 export default function ChatSideBar({ onClose, open }: ChatSideBarProps) {
   // get user from session
   const { user: loggedInUser } = useSession();
+
+  // query client
+  const queryClient = useQueryClient();
+
+  // get channel from chat context
+  const { channel } = useChatContext();
+
+  // use Effect to invalidate unread msg count
+  useEffect(() => {
+    if (channel?.id) {
+      queryClient.invalidateQueries({
+        queryKey: ["stream-messages-unread-count"],
+      });
+    }
+  }, [channel?.id, queryClient]);
 
   // Channel Preview
   const ChannelPreviewCustom = useCallback(
@@ -72,18 +91,38 @@ interface MenuHeaderProps {
 
 // menu header
 function MenuHeader({ onClose }: MenuHeaderProps) {
+  // state for chat dialog
+  const [showNewChatDialog, setShowNewChatDialog] = useState(false);
+
   return (
-    <div className="flex items-center gap-3 p-2">
-      <div className="h-full md:hidden">
-        <Button size={"icon"} variant="ghost" onClick={onClose}>
-          <X className="size-5" />
+    <>
+      <div className="flex items-center gap-3 p-2">
+        <div className="h-full md:hidden">
+          <Button size={"icon"} variant="ghost" onClick={onClose}>
+            <X className="size-5" />
+          </Button>
+        </div>
+        <h1 className="me-auto text-xl font-bold md:ms-2">Messages</h1>
+        {/* Start new chat */}
+        <Button
+          size={"icon"}
+          variant="ghost"
+          title="Start new chat"
+          onClick={() => setShowNewChatDialog(true)}
+        >
+          <MailPlus className="size-5" />
         </Button>
       </div>
-      <h1 className="me-auto text-xl font-bold md:ms-2">Messages</h1>
-      {/* Start new chat */}
-      <Button size={"icon"} variant="ghost" title="Start new chat">
-        <MailPlus className="size-5" />
-      </Button>
-    </div>
+      {/* Start new chat dialog */}
+      {showNewChatDialog && (
+        <NewChatDialogBox
+          onOpenChange={setShowNewChatDialog}
+          onChatCreated={() => {
+            setShowNewChatDialog(false);
+            onClose();
+          }}
+        />
+      )}
+    </>
   );
 }

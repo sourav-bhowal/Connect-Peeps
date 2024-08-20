@@ -145,3 +145,8 @@ export interface BookmarkInfo {
 export interface NotificationUnreadCount {
   unreadCount: number;
 }
+
+// STREAM MSG UNREAD COUNT TYPE
+export interface StreamMessageUnreadCount {
+  unreadCount: number;
+}

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Bookmark, Home, MessageCircle } from "lucide-react";
+import { Bookmark, Home } from "lucide-react";
 import { validateRequest } from "@/utils/auth";
 import { prisma } from "@/lib/prismaDB";
 import NotificationsButton from "./NotificationsButton";
+import UnreadStreamMessagesCountButton from "@/app/(main)/messages/UnreadMessagesCountButton";
+import streamServer from "@/lib/stream";
 
 // TYPE OF SIDEBAR
 interface SideMenuBarProps {
@@ -17,13 +19,19 @@ export default async function SideMenuBar({ className }: SideMenuBarProps) {
   // if no user
   if (!loggedInUser) return null;
 
-  // get unread notification
-  const unreadNotifications = await prisma.notification.count({
-    where: {
-      recipientId: loggedInUser.id,
-      read: false,
-    },
-  });
+  // DO ALL PROMISES
+  const [unreadNotifications, unreadStreamMessagesCount] = await Promise.all([
+    // count unread notifications
+    prisma.notification.count({
+      where: {
+        recipientId: loggedInUser.id,
+        read: false,
+      },
+    }),
+    // count unread messages stream
+    (await streamServer.getUnreadCount(loggedInUser.id))?.total_unread_count,
+  ]);
+
   return (
     <section className={className}>
       <Button
@@ -43,17 +51,12 @@ export default async function SideMenuBar({ className }: SideMenuBarProps) {
           unreadCount: unreadNotifications,
         }}
       />
-      <Button
-        variant="ghost"
-        className="flex items-center justify-start gap-3"
-        title="Messages"
-        asChild
-      >
-        <Link href="/messages">
-          <MessageCircle />
-          <span className="hidden lg:inline">Messages</span>
-        </Link>
-      </Button>
+      {/* MESSAGES */}
+      <UnreadStreamMessagesCountButton
+        initialState={{
+          unreadCount: unreadStreamMessagesCount,
+        }}
+      />
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"

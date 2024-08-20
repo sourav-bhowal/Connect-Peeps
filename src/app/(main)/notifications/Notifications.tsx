@@ -40,7 +40,7 @@ export default function MyNotifications() {
   // mark notifications as read mutation
   const { mutate } = useMutation({
     mutationFn: () => kyInstance.patch("/api/notifications/mark-as-read"),
-    // set unread count to 0
+    // set unread count to 0 manually
     onSuccess: () => {
       queryClient.setQueryData(["notification-unread-count"], {
         unreadCount: 0,
