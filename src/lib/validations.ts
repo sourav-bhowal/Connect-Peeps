@@ -92,3 +92,6 @@ export const createCommentSchema = z.object({
     .min(2, "Content must be atleast 2 characters")
     .max(300, "Content must not exceed 300 characters"),
 });
+
+// SCHEMA VALIDATIONS FOR COMMENT FORM
+export type CreateCommentSchemaType = z.infer<typeof createCommentSchema>;

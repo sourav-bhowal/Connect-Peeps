@@ -7,7 +7,8 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { Button } from "../../ui/button";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import EditCommentDialog from "./editComment/editCommentDialog";
 // import DeleteCommentDialog from "./commentDelete/DeleteCommentDialog";
 
 interface MoreCommentButtonProps {
@@ -22,6 +23,9 @@ export default function MoreCommentButtons({
   // Show delete dailog state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
+  // shoe edit dialog state
+  const [showEditDialog, setShowEditDialog] = useState(false);
+
   return (
     <>
       <DropdownMenu>
@@ -31,6 +35,12 @@ export default function MoreCommentButtons({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+            <span className="flex items-center gap-3 text-primary">
+              <Edit className="size-4" />
+              Edit
+            </span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
             <span className="flex items-center gap-3 text-destructive">
               <Trash2 className="size-4" />
@@ -44,6 +54,11 @@ export default function MoreCommentButtons({
         open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
       /> */}
+      <EditCommentDialog
+        comment={comment}
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+      />
     </>
   );
 }

@@ -111,7 +111,7 @@ export function Comment({ comment }: CommentProps) {
       {comment.user.id === loggedInUser.id && (
         <MoreCommentButtons
           comment={comment}
-          className="ms-auto opacity-0 transition-opacity group-hover/comment:opacity-100"
+          className="ms-auto sm:opacity-0 transition-opacity group-hover/comment:opacity-100"
         />
       )}
     </div>
