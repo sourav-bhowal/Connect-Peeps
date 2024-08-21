@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   InfiniteData,
   QueryFilters,
+  QueryKey,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
@@ -24,7 +25,7 @@ export function useEditCommentMutation() {
     // On success do this
     onSuccess: async (updatedComment) => {
       // filter the querys as per query key
-      const queryKey = ["post-comments", updatedComment.postId];
+      const queryKey: QueryKey = ["post-comments", updatedComment.postId];
       // cancel the ongoing queries
       await queryClient.cancelQueries({ queryKey });
       // update the query

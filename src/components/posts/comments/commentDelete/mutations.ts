@@ -6,7 +6,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { deleteComment } from "./actions";
-import { CommentData, CommentsPage } from "@/utils/types";
+import { CommentsPage } from "@/utils/types";
 
 // MUTATION TO DELETE COMMENT
 export function useDeleteCommentMutation() {

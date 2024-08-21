@@ -11,11 +11,13 @@ import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import EditCommentDialog from "./editComment/editCommentDialog";
 // import DeleteCommentDialog from "./commentDelete/DeleteCommentDialog";
 
+// PROPS FOR MORE COMMENT BUTTON
 interface MoreCommentButtonProps {
   comment: CommentData;
   className?: string;
 }
 
+// MORE COMMENT BUTTON
 export default function MoreCommentButtons({
   comment,
   className,
@@ -41,12 +43,12 @@ export default function MoreCommentButtons({
               Edit
             </span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
+          {/* <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
             <span className="flex items-center gap-3 text-destructive">
               <Trash2 className="size-4" />
               Delete
             </span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
       {/* <DeleteCommentDialog
