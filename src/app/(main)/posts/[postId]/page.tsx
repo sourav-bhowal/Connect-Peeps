@@ -55,7 +55,7 @@ export async function generateMetadata({
 }
 
 // Post Details page
-export default async function Page({
+export default async function PostPage({
   params: { postId },
 }: PostDetailsPageProps) {
   // get user from session
