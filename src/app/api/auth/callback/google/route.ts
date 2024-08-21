@@ -7,6 +7,7 @@ import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
+// GET GOOGLE AUTHORIZATION ROUTE
 export async function GET(request: NextRequest) {
   // GET GOOGLE CODE
   const code = request.nextUrl.searchParams.get("code");
@@ -15,6 +16,7 @@ export async function GET(request: NextRequest) {
   // GET STORED STATE AND CODE VERIFIER
   const storedState = cookies().get("state")?.value;
   const storedCodeVerifier = cookies().get("code_verifier")?.value;
+
   // CHECK IF STATE AND CODE VERIFIER ARE VALID
   if (
     !code ||
@@ -26,6 +28,7 @@ export async function GET(request: NextRequest) {
     return new Response(null, { status: 400 });
   }
 
+  // VALIDATE GOOGLE CODE
   try {
     const tokens = await google.validateAuthorizationCode(
       code,
@@ -41,13 +44,14 @@ export async function GET(request: NextRequest) {
       })
       .json<{ id: string; name: string }>();
 
-      // CHECK IF USER ALREADY EXISTS
+    // CHECK IF USER ALREADY EXISTS
     const existingUser = await prisma.user.findUnique({
       where: {
         googleId: googleUser.id,
       },
     });
 
+    // IF USER ALREADY EXISTS SET SESSION AND REDIRECT
     if (existingUser) {
       const session = await lucia.createSession(existingUser.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
@@ -60,7 +64,7 @@ export async function GET(request: NextRequest) {
       return new Response(null, { status: 302, headers: { location: "/" } });
     }
 
-    // CREATE USER
+    // CREATE USER //
 
     // generate user id
     const userId = generateIdFromEntropySize(10);
@@ -109,10 +113,12 @@ export async function GET(request: NextRequest) {
     return new Response(null, { status: 302, headers: { location: "/" } });
   } catch (error) {
     console.error(error);
+    // IF Oauth Error
     if (error instanceof OAuth2RequestError) {
       return new Response(null, { status: 400 });
     }
 
+    // IF Unknown Error
     return new Response(null, { status: 500 });
   }
 }
