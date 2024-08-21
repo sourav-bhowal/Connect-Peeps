@@ -12,6 +12,7 @@ interface SideMenuBarProps {
   className?: string;
 }
 
+// SIDEBAR CONTAINER
 export default async function SideMenuBar({ className }: SideMenuBarProps) {
   // get user
   const { user: loggedInUser } = await validateRequest();

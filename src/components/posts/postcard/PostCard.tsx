@@ -58,7 +58,7 @@ export default function PostCard({ post }: PostCardProps) {
         {post.user.id === loggedInUser.id && (
           <MorePostButtons
             post={post}
-            className="opacity-0 transition-opacity group-hover/post:opacity-100"
+            className="sm:opacity-0 transition-opacity group-hover/post:opacity-100"
           />
         )}
       </div>

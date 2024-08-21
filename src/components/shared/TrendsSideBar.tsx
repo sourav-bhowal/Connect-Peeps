@@ -41,7 +41,7 @@ async function WhoToFollow() {
       },
     },
     select: getUserData(user?.id as string),
-    take: 5,
+    take: 4,
   });
 
   return (
