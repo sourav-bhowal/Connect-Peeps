@@ -4,12 +4,7 @@ import { cache, Suspense } from "react";
 import notFound from "../../not-found";
 import { validateRequest } from "@/utils/auth";
 import PostCard from "@/components/posts/postcard/PostCard";
-import UserToolTip from "@/components/shared/UserToolTip";
-import Link from "next/link";
-import UserAvatar from "@/components/shared/UserAvatar";
 import { Loader2 } from "lucide-react";
-import LinkifyLinks from "@/components/links/LinkifyLinks";
-import FollowButton from "@/components/shared/FollowButton";
 import { PostDetailsSidebar } from "./PostDetailsSideBar";
 
 // Post Details page params
