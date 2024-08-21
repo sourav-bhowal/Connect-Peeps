@@ -179,7 +179,7 @@ export default function NewChatDialogBox({
             </div>
           </section>
           {/* BUTTON TO CREATE CHAT */}
-          <DialogFooter className="px-6 pb-6">
+          <DialogFooter className="px-6 pb-6 gap-2">
             {/* If multiple stream users are selected give option to enter group name */}
             {selectedStreamUsers.length > 1 && (
               <div className="flex w-full items-center space-x-2">
@@ -188,7 +188,7 @@ export default function NewChatDialogBox({
                   placeholder="Enter a name for your group"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
-                  className="w-[80%] bg-muted/60"
+                  className="bg-muted/60"
                 />
                 {/* <Input
                   type="file"

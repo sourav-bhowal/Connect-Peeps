@@ -16,7 +16,7 @@ export default function ChatComponent() {
   const { resolvedTheme } = useTheme();
 
   // state for sidebar
-  const [sideBarOpen, setSideBarOpen] = useState(false);
+  const [sideBarOpen, setSideBarOpen] = useState(true);
 
   // if chat client is not initialized
   if (!chatClient) {

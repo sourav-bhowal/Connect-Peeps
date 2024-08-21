@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useState } from "react";
 import NewChatDialogBox from "./NewChatDialogBox";
 import { useQueryClient } from "@tanstack/react-query";
+import { Channel } from "stream-chat";
 
 // ChatSideBar Props
 interface ChatSideBarProps {
@@ -28,6 +29,7 @@ export default function ChatSideBar({ onClose, open }: ChatSideBarProps) {
 
   // get channel from chat context
   const { channel } = useChatContext();
+  
 
   // use Effect to invalidate unread msg count
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function ChatSideBar({ onClose, open }: ChatSideBarProps) {
         open ? "flex" : "hidden",
       )}
     >
-      <MenuHeader onClose={onClose} />
+      <MenuHeader onClose={onClose} channel={channel} />
       <ChannelList
         filters={{
           type: "messaging",
@@ -87,10 +89,11 @@ export default function ChatSideBar({ onClose, open }: ChatSideBarProps) {
 // interface menu header
 interface MenuHeaderProps {
   onClose: () => void;
+  channel: Channel | undefined;
 }
 
 // menu header
-function MenuHeader({ onClose }: MenuHeaderProps) {
+function MenuHeader({ onClose, channel }: MenuHeaderProps) {
   // state for chat dialog
   const [showNewChatDialog, setShowNewChatDialog] = useState(false);
 
@@ -98,9 +101,11 @@ function MenuHeader({ onClose }: MenuHeaderProps) {
     <>
       <div className="flex items-center gap-3 p-2">
         <div className="h-full md:hidden">
-          <Button size={"icon"} variant="ghost" onClick={onClose}>
-            <X className="size-5" />
-          </Button>
+          {channel && (
+            <Button size={"icon"} variant="ghost" onClick={onClose}>
+              <X className="size-5" />
+            </Button>
+          )}
         </div>
         <h1 className="me-auto text-xl font-bold md:ms-2">Messages</h1>
         {/* Start new chat */}

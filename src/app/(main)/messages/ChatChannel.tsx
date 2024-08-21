@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { ArrowBigLeft, Menu } from "lucide-react";
 import {
   Channel,
   ChannelHeader,
@@ -44,7 +44,7 @@ function CustomChannelHeader({
 }: CustomChannelHeaderProps) {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-full p-2 md:hidden">
+      <div className="h-full p-2 md:hidden ">
         <Button size={"icon"} variant="ghost" onClick={openSidebar}>
           <Menu className="size-5" />
         </Button>
