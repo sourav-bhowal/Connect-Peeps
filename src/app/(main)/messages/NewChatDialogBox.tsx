@@ -110,7 +110,9 @@ export default function NewChatDialogBox({
       toast({
         title: "Error",
         description:
-          "An error occurred while creating your chat. Please try again.",
+          `${selectedStreamUsers.length > 1 && groupName.length === 0 ? "Group name is required" : ""}` ||
+          "Something went wrong. Please try again.",
+
         variant: "destructive",
       });
     },
@@ -179,7 +181,7 @@ export default function NewChatDialogBox({
             </div>
           </section>
           {/* BUTTON TO CREATE CHAT */}
-          <DialogFooter className="px-6 pb-6 gap-2">
+          <DialogFooter className="gap-2 px-6 pb-6">
             {/* If multiple stream users are selected give option to enter group name */}
             {selectedStreamUsers.length > 1 && (
               <div className="flex w-full items-center space-x-2">
@@ -200,7 +202,11 @@ export default function NewChatDialogBox({
             )}
             <Button
               type="submit"
-              disabled={!selectedStreamUsers.length}
+              disabled={
+                !selectedStreamUsers.length ||
+                mutation.isPending ||
+                (selectedStreamUsers.length > 1 && groupName.length === 0)
+              }
               onClick={() => mutation.mutate()}
             >
               {mutation.isPending ? (
