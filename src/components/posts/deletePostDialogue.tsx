@@ -43,7 +43,7 @@ export default function DeletePostDialogue({
             Are you sure you want to delete this? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button
             variant="destructive"
             onClick={() =>
