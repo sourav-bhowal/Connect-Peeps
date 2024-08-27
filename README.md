@@ -12,6 +12,8 @@ A next generation social media app created using NextJS.
 
 **TanStack Query**
 
+**Lucia Auth**
+
 **Zod**
 
 **Prisma**
